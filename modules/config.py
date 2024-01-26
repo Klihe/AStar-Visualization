@@ -1,0 +1,12 @@
+# config.py
+
+class Config:
+    ROWS = 5
+    COLUMNS = 10
+
+    GRID_THICKNESS = 5
+
+    RECT_SIZE = 100
+
+    WINDOW_WIDTH = COLUMNS * RECT_SIZE
+    WINDOW_HEIGHT = ROWS * RECT_SIZE
