@@ -8,6 +8,7 @@ from modules.config import Config
 pygame.init()
 
 window = pygame.display.set_mode((Config.WINDOW_WIDTH, Config.WINDOW_HEIGHT))
+pygame.display.set_caption("A* - PathFinding - Visualization")
 clock = pygame.time.Clock()
 font = pygame.font.Font(None, 30)
 
@@ -20,8 +21,8 @@ class Rect:
         self.g = 0
 
     def update_values(self, g_point=Config.START_POINT, g=0):
-        self.g = g + math.sqrt((g_point[0] - self.point[0])**2 + (g_point[1] - self.point[1])**2) * 10
-        self.h = math.sqrt((Config.END_POINT[0] - self.point[0])**2 + (Config.END_POINT[1] - self.point[1])**2) * 10
+        self.g = round(g + math.sqrt((g_point[0] - self.point[0])**2 + (g_point[1] - self.point[1])**2) * 10)
+        self.h = round(math.sqrt((Config.END_POINT[0] - self.point[0])**2 + (Config.END_POINT[1] - self.point[1])**2) * 10)
         self.f = self.g + self.h
 
     def draw(self):
@@ -80,6 +81,8 @@ while True:
                             if neighbor_rect and neighbor_rect.color == Color.WHITE:
                                 neighbor_rect.update_values(clicked_rect.point, clicked_rect.g)
                                 neighbor_rect.color = Color.GREEN
+                            elif neighbor_rect.color == Color.GREEN and clicked_rect.g <= neighbor_rect.g - 10:
+                                neighbor_rect.update_values(clicked_rect.point, clicked_rect.g)
 
                 if rect.color != Color.BLUE and rect.color != Color.BLACK:
                     clicked_rect.color = Color.RED
@@ -89,4 +92,3 @@ while True:
 
     pygame.display.flip()
     clock.tick(60)
-
