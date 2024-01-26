@@ -1,94 +1,127 @@
+# main.py
+
+# libraries
 import pygame
 import sys
 import math
 
+# custom libraries
 from modules.color import Color
 from modules.config import Config
 
+# init window
 pygame.init()
-
 window = pygame.display.set_mode((Config.WINDOW_WIDTH, Config.WINDOW_HEIGHT))
 pygame.display.set_caption("A* - PathFinding - Visualization")
 clock = pygame.time.Clock()
 font = pygame.font.Font(None, 30)
 
-class Rect:
+# class for Nodes
+class Node:
     def __init__(self, x, y, color=Color.WHITE):
-        self.rect = pygame.Rect(x, y, Config.RECT_SIZE, Config.RECT_SIZE)
+        # common values
+        self.rect = pygame.Rect(x, y, Config.NODE_SIZE, Config.NODE_SIZE)
+        self.point = (x/Config.NODE_SIZE, y/Config.NODE_SIZE)
         self.color = color
 
-        self.point = (x/Config.RECT_SIZE, y/Config.RECT_SIZE)
+        # auxiliary values
         self.g = 0
 
+    # update values
     def update_values(self, g_point=Config.START_POINT, g=0):
+        # g = distance from start
         self.g = round(g + math.sqrt((g_point[0] - self.point[0])**2 + (g_point[1] - self.point[1])**2) * 10)
+        # h = distance to end
         self.h = round(math.sqrt((Config.END_POINT[0] - self.point[0])**2 + (Config.END_POINT[1] - self.point[1])**2) * 10)
+        # f = g value + h value
         self.f = self.g + self.h
 
     def draw(self):
+        # display node
         pygame.draw.rect(window, self.color, self.rect)
+
+        # update display UI values
         if self.color == Color.GREEN or self.color == Color.RED:
             text_g = font.render(f"{round(self.g)}", None, Color.BLACK)
             text_h = font.render(f"{round(self.h)}", None, Color.BLACK)
             text_f = font.render(f"{round(self.f)}", None, Color.BLACK)
-            window.blit(text_g, (self.rect.x + Config.RECT_SIZE/20, self.rect.y + Config.RECT_SIZE/20))
-            window.blit(text_h, (self.rect.x + Config.RECT_SIZE/2, self.rect.y + Config.RECT_SIZE/20))
-            window.blit(text_f, (self.rect.x + Config.RECT_SIZE/3, self.rect.y + Config.RECT_SIZE/2))
+            window.blit(text_g, (self.rect.x + Config.NODE_SIZE/20, self.rect.y + Config.NODE_SIZE/20))
+            window.blit(text_h, (self.rect.x + Config.NODE_SIZE/2, self.rect.y + Config.NODE_SIZE/20))
+            window.blit(text_f, (self.rect.x + Config.NODE_SIZE/3, self.rect.y + Config.NODE_SIZE/2))
 
+# draw gird to surface
 def draw_grid():
     for i in range(Config.COLUMNS):
-        pygame.draw.line(window, Color.BLACK, (i*Config.RECT_SIZE,0), (i*Config.RECT_SIZE, Config.WINDOW_HEIGHT), Config.GRID_THICKNESS)
+        pygame.draw.line(window, Color.BLACK, (i*Config.NODE_SIZE,0), (i*Config.NODE_SIZE, Config.WINDOW_HEIGHT), Config.GRID_THICKNESS)
     for i in range(Config.ROWS):
-        pygame.draw.line(window, Color.BLACK, (0, i*Config.RECT_SIZE), (Config.WINDOW_WIDTH, i*Config.RECT_SIZE), Config.GRID_THICKNESS)
+        pygame.draw.line(window, Color.BLACK, (0, i*Config.NODE_SIZE), (Config.WINDOW_WIDTH, i*Config.NODE_SIZE), Config.GRID_THICKNESS)
 
-rectangles = [Rect(i*Config.RECT_SIZE, j*Config.RECT_SIZE) for i in range(Config.COLUMNS) for j in range(Config.ROWS)]
+# create 2d array of nodes
+nodes = [Node(i*Config.NODE_SIZE, j*Config.NODE_SIZE) for i in range(Config.COLUMNS) for j in range(Config.ROWS)]
 
-rectangles[Config.ROWS*Config.START_POINT[0]+Config.START_POINT[1]].color = Color.BLUE
-rectangles[Config.ROWS*Config.END_POINT[0]+Config.END_POINT[1]].color = Color.BLUE
+# change color of start and end
+nodes[Config.ROWS*Config.START_POINT[0]+Config.START_POINT[1]].color = Color.BLUE
+nodes[Config.ROWS*Config.END_POINT[0]+Config.END_POINT[1]].color = Color.BLUE
 
+# change color of barriers
 def draw_barriers(data):
-    for rect in data:
-        rectangles[Config.ROWS*rect[0]+rect[1]].color = Color.BLACK
+    for node in data:
+        nodes[Config.ROWS*node[0]+node[1]].color = Color.BLACK
 
+# main loop
 while True:
+
+    # quit
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
 
+    # surface
     window.fill(Color.BLACK)
 
+    # mouse input
     mouse_pos = pygame.mouse.get_pos()
     mouse_click = pygame.mouse.get_pressed()
 
-    for rect in rectangles:
-        rect.draw()
+    # checking nodes
+    for node in nodes:
+        node.draw()
 
-        if rect.rect.collidepoint(mouse_pos):
+        # collision between mouse and node
+        if node.rect.collidepoint(mouse_pos):
+            # selecting of node
             if mouse_click[0] == 1:
-                clicked_rect = rect
+                clicked_node = node
 
+                # make surrounding nodes green
                 for i in range(-1, 2):
                     for j in range(-1, 2):
-                        neighbor_x = clicked_rect.rect.x + i * Config.RECT_SIZE
-                        neighbor_y = clicked_rect.rect.y + j * Config.RECT_SIZE
+                        neighbor_x = clicked_node.rect.x + i * Config.NODE_SIZE
+                        neighbor_y = clicked_node.rect.y + j * Config.NODE_SIZE
 
+                        # checking borders
                         if 0 <= neighbor_x < Config.WINDOW_WIDTH and 0 <= neighbor_y < Config.WINDOW_HEIGHT:
-                            neighbor_rect = next(
-                                (r for r in rectangles if r.rect.collidepoint((neighbor_x, neighbor_y))),
+                            neighbor_node = next(
+                                (r for r in nodes if r.rect.collidepoint((neighbor_x, neighbor_y))),
                                 None
                             )
-                            if neighbor_rect and neighbor_rect.color == Color.WHITE:
-                                neighbor_rect.update_values(clicked_rect.point, clicked_rect.g)
-                                neighbor_rect.color = Color.GREEN
-                            elif neighbor_rect.color == Color.GREEN and clicked_rect.g <= neighbor_rect.g - 10:
-                                neighbor_rect.update_values(clicked_rect.point, clicked_rect.g)
+                            # update values
+                            if neighbor_node and neighbor_node.color == Color.WHITE:
+                                neighbor_node.update_values(clicked_node.point, clicked_node.g)
+                                neighbor_node.color = Color.GREEN
+                            # second update of values
+                            elif neighbor_node.color == Color.GREEN and clicked_node.g <= neighbor_node.g - 10:
+                                neighbor_node.update_values(clicked_node.point, clicked_node.g)
 
-                if rect.color != Color.BLUE and rect.color != Color.BLACK:
-                    clicked_rect.color = Color.RED
+                # clicked node = RED
+                if node.color != Color.BLUE and node.color != Color.BLACK:
+                    clicked_node.color = Color.RED
 
+        # call other functions
         draw_grid()
         draw_barriers(Config.BARRIERS_POS)
 
+    # update display
     pygame.display.flip()
     clock.tick(60)
