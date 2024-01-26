@@ -9,10 +9,7 @@ pygame.init()
 
 window = pygame.display.set_mode((Config.WINDOW_WIDTH, Config.WINDOW_HEIGHT))
 clock = pygame.time.Clock()
-font = pygame.font.Font(None, 36)
-
-start_point = (0, 0)
-end_point = (10, 5)
+font = pygame.font.Font(None, 30)
 
 class Rect:
     def __init__(self, x, y, color=Color.WHITE):
@@ -21,16 +18,16 @@ class Rect:
 
         self.point = (x/Config.RECT_SIZE, y/Config.RECT_SIZE)
 
-        self.g = round(math.sqrt((start_point[0] - self.point[0])**2 + (start_point[1] - self.point[1])**2) * 10)
-        self.h = round(math.sqrt((end_point[0] - self.point[0])**2 + (end_point[1] - self.point[1])**2) * 10)
+        self.g = math.sqrt((Config.START_POINT[0] - self.point[0])**2 + (Config.START_POINT[1] - self.point[1])**2) * 10
+        self.h = math.sqrt((Config.END_POINT[0] - self.point[0])**2 + (Config.END_POINT[1] - self.point[1])**2) * 10
         self.f = self.g + self.h
 
     def draw(self):
         pygame.draw.rect(window, self.color, self.rect)
         if self.color == Color.GREEN or self.color == Color.RED:
-            text_g = font.render(f"{self.g}", None, Color.BLACK)
-            text_h = font.render(f"{self.h}", None, Color.BLACK)
-            text_f = font.render(f"{self.f}", None, Color.BLACK)
+            text_g = font.render(f"{round(self.g)}", None, Color.BLACK)
+            text_h = font.render(f"{round(self.h)}", None, Color.BLACK)
+            text_f = font.render(f"{round(self.f)}", None, Color.BLACK)
             window.blit(text_g, (self.rect.x + Config.RECT_SIZE/20, self.rect.y + Config.RECT_SIZE/20))
             window.blit(text_h, (self.rect.x + Config.RECT_SIZE/2, self.rect.y + Config.RECT_SIZE/20))
             window.blit(text_f, (self.rect.x + Config.RECT_SIZE/3, self.rect.y + Config.RECT_SIZE/2))
@@ -43,8 +40,8 @@ def drawGrid():
 
 rectangles = [Rect(i*Config.RECT_SIZE, j*Config.RECT_SIZE) for i in range(Config.COLUMNS) for j in range(Config.ROWS)]
 
-rectangles[0].color = Color.BLUE
-rectangles[49].color = Color.BLUE
+rectangles[Config.ROWS*Config.START_POINT[0]+Config.START_POINT[1]].color = Color.BLUE
+rectangles[Config.ROWS*Config.END_POINT[0]+Config.END_POINT[1]].color = Color.BLUE
 
 while True:
     for event in pygame.event.get():
