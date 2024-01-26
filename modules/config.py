@@ -13,3 +13,4 @@ class Config:
 
     START_POINT = (0,0)
     END_POINT = (14,9)
+    BARRIERS_POS = [(2,1),(2,2),(2,3),(3,2),(3,3)]

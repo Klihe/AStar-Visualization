@@ -17,8 +17,10 @@ class Rect:
         self.color = color
 
         self.point = (x/Config.RECT_SIZE, y/Config.RECT_SIZE)
+        self.g = 0
 
-        self.g = math.sqrt((Config.START_POINT[0] - self.point[0])**2 + (Config.START_POINT[1] - self.point[1])**2) * 10
+    def update_values(self, g_point=Config.START_POINT, g=0):
+        self.g = g + math.sqrt((g_point[0] - self.point[0])**2 + (g_point[1] - self.point[1])**2) * 10
         self.h = math.sqrt((Config.END_POINT[0] - self.point[0])**2 + (Config.END_POINT[1] - self.point[1])**2) * 10
         self.f = self.g + self.h
 
@@ -32,7 +34,7 @@ class Rect:
             window.blit(text_h, (self.rect.x + Config.RECT_SIZE/2, self.rect.y + Config.RECT_SIZE/20))
             window.blit(text_f, (self.rect.x + Config.RECT_SIZE/3, self.rect.y + Config.RECT_SIZE/2))
 
-def drawGrid():
+def draw_grid():
     for i in range(Config.COLUMNS):
         pygame.draw.line(window, Color.BLACK, (i*Config.RECT_SIZE,0), (i*Config.RECT_SIZE, Config.WINDOW_HEIGHT), Config.GRID_THICKNESS)
     for i in range(Config.ROWS):
@@ -42,6 +44,10 @@ rectangles = [Rect(i*Config.RECT_SIZE, j*Config.RECT_SIZE) for i in range(Config
 
 rectangles[Config.ROWS*Config.START_POINT[0]+Config.START_POINT[1]].color = Color.BLUE
 rectangles[Config.ROWS*Config.END_POINT[0]+Config.END_POINT[1]].color = Color.BLUE
+
+def draw_barriers(data):
+    for rect in data:
+        rectangles[Config.ROWS*rect[0]+rect[1]].color = Color.BLACK
 
 while True:
     for event in pygame.event.get():
@@ -72,12 +78,14 @@ while True:
                                 None
                             )
                             if neighbor_rect and neighbor_rect.color == Color.WHITE:
+                                neighbor_rect.update_values(clicked_rect.point, clicked_rect.g)
                                 neighbor_rect.color = Color.GREEN
 
                 if rect.color != Color.BLUE and rect.color != Color.BLACK:
                     clicked_rect.color = Color.RED
 
-        drawGrid()
+        draw_grid()
+        draw_barriers(Config.BARRIERS_POS)
 
     pygame.display.flip()
     clock.tick(60)
