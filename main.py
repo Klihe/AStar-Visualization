@@ -2,6 +2,7 @@
 
 # libraries
 import pygame
+import numpy as np
 import sys
 import math
 
@@ -16,12 +17,17 @@ pygame.display.set_caption("A* - PathFinding - Visualization")
 clock = pygame.time.Clock()
 font = pygame.font.Font(None, 30)
 
+nodes = np.empty((Config.COLUMNS, Config.ROWS), dtype=object)
+clicked_node = []
+
 # class for Nodes
 class Node:
     def __init__(self, x, y, color=Color.WHITE):
         # common values
-        self.rect = pygame.Rect(x, y, Config.NODE_SIZE, Config.NODE_SIZE)
-        self.point = (x/Config.NODE_SIZE, y/Config.NODE_SIZE)
+        self.x = x
+        self.y = y
+        self.rect = pygame.Rect(x*Config.NODE_SIZE, y*Config.NODE_SIZE, Config.NODE_SIZE, Config.NODE_SIZE)
+        self.point = (x, y)
         self.color = color
 
         # auxiliary values
@@ -57,16 +63,18 @@ def draw_grid():
         pygame.draw.line(window, Color.BLACK, (0, i*Config.NODE_SIZE), (Config.WINDOW_WIDTH, i*Config.NODE_SIZE), Config.GRID_THICKNESS)
 
 # create 2d array of nodes
-nodes = [Node(i*Config.NODE_SIZE, j*Config.NODE_SIZE) for i in range(Config.COLUMNS) for j in range(Config.ROWS)]
+for i in range(Config.COLUMNS):
+    for j in range(Config.ROWS):
+        nodes[i][j] = Node(i, j)
 
 # change color of start and end
-nodes[Config.ROWS*Config.START_POINT[0]+Config.START_POINT[1]].color = Color.BLUE
-nodes[Config.ROWS*Config.END_POINT[0]+Config.END_POINT[1]].color = Color.BLUE
+nodes[Config.START_POINT[0]][Config.START_POINT[1]].color = Color.BLUE
+nodes[Config.END_POINT[0]][Config.END_POINT[1]].color = Color.BLUE
 
 # change color of barriers
 def draw_barriers(data):
     for node in data:
-        nodes[Config.ROWS*node[0]+node[1]].color = Color.BLACK
+        nodes[node[0]][node[1]].color = Color.BLACK
 
 # main loop
 while True:
@@ -77,50 +85,47 @@ while True:
             pygame.quit()
             sys.exit()
 
-    # surface
-    window.fill(Color.BLACK)
-
     # mouse input
     mouse_pos = pygame.mouse.get_pos()
     mouse_click = pygame.mouse.get_pressed()
 
     # checking nodes
-    for node in nodes:
-        node.draw()
+    for i in range(Config.COLUMNS):
+        for j in range(Config.ROWS):
+            node = nodes[i, j]
+            node.draw()
 
-        # collision between mouse and node
-        if node.rect.collidepoint(mouse_pos):
-            # selecting of node
-            if mouse_click[0] == 1:
-                clicked_node = node
+            # collision between mouse and node
+            if node.rect.collidepoint(mouse_pos):
+                # selecting of node
+                if mouse_click[0] == 1:
+                    clicked_node.append(node)
 
-                # make surrounding nodes green
-                for i in range(-1, 2):
-                    for j in range(-1, 2):
-                        neighbor_x = clicked_node.rect.x + i * Config.NODE_SIZE
-                        neighbor_y = clicked_node.rect.y + j * Config.NODE_SIZE
+                    # make surrounding nodes green
+                    for i in range(-1, 2):
+                        for j in range(-1, 2):
+                            neighbor_x = clicked_node[-1].x + i
+                            neighbor_y = clicked_node[-1].y + j
 
-                        # checking borders
-                        if 0 <= neighbor_x < Config.WINDOW_WIDTH and 0 <= neighbor_y < Config.WINDOW_HEIGHT:
-                            neighbor_node = next(
-                                (r for r in nodes if r.rect.collidepoint((neighbor_x, neighbor_y))),
-                                None
-                            )
-                            # update values
-                            if neighbor_node and neighbor_node.color == Color.WHITE:
-                                neighbor_node.update_values(clicked_node.point, clicked_node.g)
-                                neighbor_node.color = Color.GREEN
-                            # second update of values
-                            elif neighbor_node.color == Color.GREEN and clicked_node.g <= neighbor_node.g - 10:
-                                neighbor_node.update_values(clicked_node.point, clicked_node.g)
+                            # checking borders
+                            if 0 <= neighbor_x < Config.COLUMNS and 0 <= neighbor_y < Config.ROWS:
+                                neighbor_node = nodes[neighbor_x, neighbor_y]
 
-                # clicked node = RED
-                if node.color != Color.BLUE and node.color != Color.BLACK:
-                    clicked_node.color = Color.RED
+                                # update values
+                                if neighbor_node and neighbor_node.color == Color.WHITE:
+                                    neighbor_node.update_values(clicked_node[-1].point, clicked_node[-1].g)
+                                    neighbor_node.color = Color.GREEN
+                                # second update of values
+                                elif neighbor_node.color == Color.GREEN and clicked_node[-1].g <= neighbor_node.g - 10:
+                                    neighbor_node.update_values(clicked_node[-1].point, clicked_node[-1].g)
+                                
+                    # clicked node = RED
+                    if node.color != Color.BLUE and node.color != Color.BLACK and node.color != Color.RED:
+                        clicked_node[-1].color = Color.RED
 
         # call other functions
-        draw_grid()
         draw_barriers(Config.BARRIERS_POS)
+        draw_grid()
 
     # update display
     pygame.display.flip()
