@@ -7,7 +7,7 @@ from modules.color import Color
 from modules.config import Config
 
 class Node:
-    def __init__(self, x, y, color=Color.WHITE) -> None:
+    def __init__(self, x, y, node_start, node_end, color=Color.WHITE) -> None:
         self.x = x
         self.y = y 
         self.point = (x, y)
@@ -15,12 +15,14 @@ class Node:
 
         self.rect = pygame.Rect(x*Config.NODE_SIZE, y*Config.NODE_SIZE, Config.NODE_SIZE, Config.NODE_SIZE)
 
-        self.g = round(math.sqrt((Config.START_POINT[0] - self.x)**2 + (Config.START_POINT[1] - self.y)**2) * 10)
-        self.h = round(math.sqrt((Config.END_POINT[0] - self.x)**2 + (Config.END_POINT[1] - self.y)**2) * 10)
-        self.f = self.g + self.h
+        self.node_start = node_start
+        self.node_end = node_end
 
-    def update_values(self, calc_point, calc_g):
+        self.g = 0
+
+    def update_values(self, calc_point, calc_g=0):
         self.g = round(calc_g + math.sqrt((calc_point[0] - self.point[0])**2 + (calc_point[1] - self.point[1])**2) * 10)
+        self.h = round(math.sqrt((self.node_end[0] - self.x)**2 + (self.node_end[1] - self.y)**2) * 10)
         self.f = self.g + self.h
 
     def draw(self, surface, font):

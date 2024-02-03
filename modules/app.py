@@ -21,15 +21,15 @@ class App:
         self.color_value = 0
 
         self.barriers = []
-        self.start = []
-        self.end = []
+        self.start = None
+        self.end = None
 
         self.calc = False
         self.result = False
 
         for i in range(Config.COLUMNS):
             for j in range(Config.ROWS):
-                self.nodes[i][j] = Node(i, j)
+                self.nodes[i][j] = Node(i, j, self.start, self.end)
 
     def update(self, mouse_click, mouse_pos, keys) -> None:
 
@@ -43,6 +43,10 @@ class App:
 
         elif keys[pygame.K_2]:
             self.barriers, self.start, self.end = get_plan(self.nodes)
+            for i in range(Config.COLUMNS):
+                for j in range(Config.ROWS):
+                    self.nodes[i, j].node_start = self.start
+                    self.nodes[i, j].node_end = self.end
             self.result = False
             self.state = State.CALC
             pygame.time.delay(200)
@@ -70,8 +74,8 @@ class App:
                 node = self.nodes[i, j]
                 node.draw(surface, font)
 
-        if self.state == State.CALC:
 
+        if self.start and self.end:
             for point in self.barriers:
                 self.nodes[point[0]][point[1]].color = Color.BLACK
 
@@ -81,5 +85,5 @@ class App:
                 self.nodes[self.start[0]][self.start[1]].color = Color.BLUE
             elif self.state == State.PLANNER or self.state == State.CALC:
                 self.nodes[self.start[0]][self.start[1]].color = Color.YELLOW
-        
+    
         grid(surface)

@@ -23,4 +23,6 @@ def planner(mouse_click, mouse_pos, keys, all_nodes, color_value) -> int:
         else:
             color_value = 0
 
+    print(color[color_value])
+
     return color_value
