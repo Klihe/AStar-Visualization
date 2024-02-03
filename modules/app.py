@@ -12,12 +12,17 @@ from modules.background import grid
 from modules.app_state.calc import calc
 from modules.app_state.result import result
 from modules.app_state.planner import planner
+from modules.app_state.get_plan import get_plan
 
 class App:
     def __init__(self) -> None:
         self.state = State.PLANNER
         self.nodes = np.empty((Config.COLUMNS, Config.ROWS), dtype=object)
         self.color_value = 0
+
+        self.barriers = []
+        self.start = []
+        self.end = []
 
         self.calc = False
         self.result = False
@@ -37,6 +42,7 @@ class App:
             pygame.time.delay(200)
 
         elif keys[pygame.K_2]:
+            self.barriers, self.start, self.end = get_plan(self.nodes)
             self.result = False
             self.state = State.CALC
             pygame.time.delay(200)
@@ -50,12 +56,12 @@ class App:
 
         elif self.state == State.CALC:
             if self.calc == False:
-                calc(self.nodes[Config.START_POINT[0]][Config.START_POINT[1]], Config.END_POINT, self.nodes)
+                calc(self.nodes[self.start[0]][self.start[1]], self.end, self.nodes)
                 self.calc = True
 
         elif self.state == State.RESULT:
             if not self.result:
-                result(self.nodes[Config.END_POINT[0]][Config.END_POINT[1]], Config.START_POINT, self.nodes)
+                result(self.nodes[self.end[0]][self.end[1]], self.start, self.nodes)
                 self.result = True
 
     def draw(self, surface, font) -> None:
@@ -64,14 +70,16 @@ class App:
                 node = self.nodes[i, j]
                 node.draw(surface, font)
 
-        for point in Config.BARRIERS_POS:
-            self.nodes[point[0]][point[1]].color = Color.BLACK
+        if self.state == State.CALC:
 
-            self.nodes[Config.END_POINT[0]][Config.END_POINT[1]].color = Color.BLUE
-        
-        if self.state == State.RESULT:
-            self.nodes[Config.START_POINT[0]][Config.START_POINT[1]].color = Color.BLUE
-        elif self.state == State.PLANNER or self.state == State.CALC:
-            self.nodes[Config.START_POINT[0]][Config.START_POINT[1]].color = Color.YELLOW
+            for point in self.barriers:
+                self.nodes[point[0]][point[1]].color = Color.BLACK
+
+                self.nodes[self.end[0]][self.end[1]].color = Color.BLUE
+            
+            if self.state == State.RESULT:
+                self.nodes[self.start[0]][self.start[1]].color = Color.BLUE
+            elif self.state == State.PLANNER or self.state == State.CALC:
+                self.nodes[self.start[0]][self.start[1]].color = Color.YELLOW
         
         grid(surface)
