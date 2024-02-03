@@ -2,10 +2,11 @@
 
 import pygame
 import numpy as np
-import math
 
 from modules.color import Color
 from modules.config import Config
+
+from modules.node import Node
 
 pygame.init()
 window = pygame.display.set_mode((Config.WINDOW_WIDTH, Config.WINDOW_HEIGHT))
@@ -14,34 +15,6 @@ clock = pygame.time.Clock()
 font = pygame.font.Font(None, 30)
 
 nodes = np.empty((Config.COLUMNS, Config.ROWS), dtype=object)
-
-class Node:
-    def __init__(self, x, y, color=Color.WHITE) -> None:
-        self.x = x
-        self.y = y 
-        self.point = (x, y)
-        self.color = color
-
-        self.rect = pygame.Rect(x*Config.NODE_SIZE, y*Config.NODE_SIZE, Config.NODE_SIZE, Config.NODE_SIZE)
-
-        self.g = round(math.sqrt((Config.START_POINT[0] - self.x)**2 + (Config.START_POINT[1] - self.y)**2) * 10)
-        self.h = round(math.sqrt((Config.END_POINT[0] - self.x)**2 + (Config.END_POINT[1] - self.y)**2) * 10)
-        self.f = self.g + self.h
-
-    def update_values(self, calc_point, calc_g):
-        self.g = round(calc_g + math.sqrt((calc_point[0] - self.point[0])**2 + (calc_point[1] - self.point[1])**2) * 10)
-        self.f = self.g + self.h
-
-    def draw(self):
-        pygame.draw.rect(window, self.color, self.rect)
-
-        if self.color == Color.GREEN or self.color == Color.RED:
-            text_g = font.render(f"{round(self.g)}", None, Color.BLACK)
-            text_h = font.render(f"{round(self.h)}", None, Color.BLACK)
-            text_f = font.render(f"{round(self.f)}", None, Color.BLACK)
-            window.blit(text_g, (self.rect.x + Config.NODE_SIZE/20, self.rect.y + Config.NODE_SIZE/20))
-            window.blit(text_h, (self.rect.x + Config.NODE_SIZE/2, self.rect.y + Config.NODE_SIZE/20))
-            window.blit(text_f, (self.rect.x + Config.NODE_SIZE/3, self.rect.y + Config.NODE_SIZE/2))
 
 def grid():
     for i in range(Config.COLUMNS):
@@ -74,10 +47,10 @@ while running:
     for i in range(Config.COLUMNS):
         for j in range(Config.ROWS):
             node = nodes[i, j]
-            node.draw()
+            node.draw(window, font)
 
     if mouse_click[0] == 1:
-        pygame.time.delay(100)
+        pygame.time.delay(500)
         last_node = Config.START_POINT
         green_nodes = []
         end = False
@@ -111,7 +84,7 @@ while running:
                 print(f"{last_node}")
 
     if mouse_click[2] == 1:
-        pygame.time.delay(100)
+        pygame.time.delay(500)
         last_node = Config.END_POINT
         red_nodes = []
         start = False
