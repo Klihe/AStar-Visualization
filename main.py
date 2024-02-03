@@ -30,7 +30,7 @@ for i in range(Config.COLUMNS):
     for j in range(Config.ROWS):
         nodes[i][j] = Node(i, j)
 
-nodes[Config.START_POINT[0]][Config.START_POINT[1]].color = Color.BLUE
+nodes[Config.START_POINT[0]][Config.START_POINT[1]].color = Color.YELLOW
 nodes[Config.END_POINT[0]][Config.END_POINT[1]].color = Color.BLUE
 
 running = True
