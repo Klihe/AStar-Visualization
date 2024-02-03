@@ -24,6 +24,9 @@ def calc(curr_node, end_point, all_nodes) -> None:
                         neighbor_node.update_values(curr_node.point, curr_node.g)
                         save_nodes.append(neighbor_node)
 
+                    elif neighbor_node.color == Color.GREEN and curr_node.g <= neighbor_node.g - 10:
+                        neighbor_node.update_values(curr_node.point, curr_node.g)
+
         if not end:
             save_nodes = sorted(save_nodes, key=lambda x: x.f)
             save_nodes[0].color = Color.RED
