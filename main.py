@@ -3,10 +3,10 @@
 import pygame
 
 from modules.config import Config
-
 from modules.app import App
 
 pygame.init()
+
 window = pygame.display.set_mode((Config.WINDOW_WIDTH, Config.WINDOW_HEIGHT))
 pygame.display.set_caption("PathFinding")
 clock = pygame.time.Clock()
@@ -16,7 +16,7 @@ app = App()
 
 running = True
 while running:
-    print("Ready")
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False

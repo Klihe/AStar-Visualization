@@ -32,9 +32,12 @@ class App:
             for i in range(Config.COLUMNS):
                 for j in range(Config.ROWS):
                     self.nodes[i, j].color = Color.WHITE
+            self.calc = False
+            self.state = State.PLANNER
             pygame.time.delay(200)
 
         elif keys[pygame.K_2]:
+            self.result = False
             self.state = State.CALC
             pygame.time.delay(200)
 
