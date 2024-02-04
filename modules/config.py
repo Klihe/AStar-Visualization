@@ -1,12 +1,12 @@
 # config.py
 
 class Config:
-    COLUMNS = 11
-    ROWS = 6
+    COLUMNS: int = 11
+    ROWS: int = 6
 
-    GRID_THICKNESS = 2
+    GRID_THICKNESS: int = 2
 
-    NODE_SIZE = 100
+    NODE_SIZE: int = 100
 
-    WINDOW_WIDTH = COLUMNS * NODE_SIZE
-    WINDOW_HEIGHT = ROWS * NODE_SIZE
+    WINDOW_WIDTH: int = COLUMNS * NODE_SIZE
+    WINDOW_HEIGHT: int = ROWS * NODE_SIZE

@@ -1,10 +1,10 @@
 # color.py
 
 class Color:
-    WHITE = 255, 255, 255
-    BLACK = 0, 0, 0
+    WHITE: tuple[int] = (255, 255, 255)
+    BLACK: tuple[int] = (0, 0, 0)
     
-    RED = 255, 0, 0
-    GREEN = 0, 255, 0
-    BLUE = 0, 0, 255
-    YELLOW = 255, 255, 0
+    RED: tuple[int] = (255, 0, 0)
+    GREEN: tuple[int] = (0, 255, 0)
+    BLUE: tuple[int] = (0, 0, 255)
+    YELLOW: tuple[int] = (255, 255, 0)

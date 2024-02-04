@@ -13,7 +13,7 @@ pygame.display.set_caption("PathFinding")
 
 clock = pygame.time.Clock()
 font = pygame.font.Font(None, 30)
-running = True
+running: bool = True
 
 while running:
 
