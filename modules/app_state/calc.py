@@ -3,9 +3,9 @@
 from modules.config import Config
 from modules.color import Color
 
-def calc(curr_node, end_point, all_nodes) -> None:
-    save_nodes = []
-    end = False
+def calc(curr_node: tuple[int], end_point: tuple[int], all_nodes: list) -> None:
+    save_nodes: list = []
+    end: bool = False
 
     while not end:
         for i in range(-1, 2):
