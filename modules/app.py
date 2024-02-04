@@ -89,3 +89,6 @@ class App:
                 self.nodes[self.start[0]][self.start[1]].color = Color.YELLOW
     
         grid(surface)
+
+        if self.state == State.PLANNER:
+            self.planner.draw(surface, pygame.mouse.get_pos())
