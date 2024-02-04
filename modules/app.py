@@ -16,22 +16,22 @@ from modules.app_state.get_plan import get_plan
 
 class App:
     def __init__(self) -> None:
-        self.state = State.PLANNER
-        self.nodes = np.empty((Config.COLUMNS, Config.ROWS), dtype=object)
+        self.state: State = State.PLANNER
+        self.nodes: list = np.empty((Config.COLUMNS, Config.ROWS), dtype=object)
 
-        self.barriers = []
-        self.start = None
-        self.end = None
+        self.barriers: list[Node] = []
+        self.start: tuple[int] = None
+        self.end: tuple[int] = None
 
-        self.calc = False
-        self.result = False
+        self.calc: bool = False
+        self.result: bool = False
 
         for i in range(Config.COLUMNS):
             for j in range(Config.ROWS):
                 self.nodes[i][j] = Node(i, j, self.start, self.end)
-        self.planner = Planner(self.nodes)
+        self.planner: Planner = Planner(self.nodes)
 
-    def update(self, mouse_click, mouse_pos, keys) -> None:
+    def update(self, mouse_click: pygame.mouse, mouse_pos: pygame.mouse, keys: pygame.key) -> None:
         if keys[pygame.K_1]:
             for i in range(Config.COLUMNS):
                 for j in range(Config.ROWS):
