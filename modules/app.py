@@ -7,18 +7,17 @@ from modules.config import Config
 from modules.color import Color
 from modules.app_state.state import State
 from modules.node.node import Node
+from modules.app_state.planner import Planner
 
 from modules.background import grid
 from modules.app_state.calc import calc
 from modules.app_state.result import result
-from modules.app_state.planner import planner
 from modules.app_state.get_plan import get_plan
 
 class App:
     def __init__(self) -> None:
         self.state = State.PLANNER
         self.nodes = np.empty((Config.COLUMNS, Config.ROWS), dtype=object)
-        self.color_value = 0
 
         self.barriers = []
         self.start = None
@@ -30,12 +29,15 @@ class App:
         for i in range(Config.COLUMNS):
             for j in range(Config.ROWS):
                 self.nodes[i][j] = Node(i, j, self.start, self.end)
+        self.planner = Planner(self.nodes)
 
     def update(self, mouse_click, mouse_pos, keys) -> None:
-
         if keys[pygame.K_1]:
             for i in range(Config.COLUMNS):
                 for j in range(Config.ROWS):
+                    self.barriers = []
+                    self.start = None
+                    self.end = None
                     self.nodes[i, j].color = Color.WHITE
             self.calc = False
             self.state = State.PLANNER
@@ -56,7 +58,8 @@ class App:
             pygame.time.delay(200)
             
         if self.state == State.PLANNER:
-            self.color_value = planner(mouse_click, mouse_pos, keys, self.nodes, self.color_value)
+            self.planner.drawing(mouse_click, mouse_pos)
+            self.planner.change_color(keys)
 
         elif self.state == State.CALC:
             if self.calc == False:
@@ -73,7 +76,6 @@ class App:
             for j in range(Config.ROWS):
                 node = self.nodes[i, j]
                 node.draw(surface, font)
-
 
         if self.start and self.end:
             for point in self.barriers:

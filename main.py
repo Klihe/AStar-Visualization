@@ -6,15 +6,15 @@ from modules.config import Config
 from modules.app import App
 
 pygame.init()
+app = App()
 
 window = pygame.display.set_mode((Config.WINDOW_WIDTH, Config.WINDOW_HEIGHT))
 pygame.display.set_caption("PathFinding")
+
 clock = pygame.time.Clock()
 font = pygame.font.Font(None, 30)
-
-app = App()
-
 running = True
+
 while running:
 
     for event in pygame.event.get():
