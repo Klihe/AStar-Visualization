@@ -6,10 +6,10 @@ from modules.color import Color
 from modules.config import Config
 
 class Planner:
-    def __init__(self, nodes) -> None:
+    def __init__(self, nodes: list) -> None:
         self.colors = [Color.BLACK, Color.YELLOW, Color.BLUE, Color.WHITE]
-        self.choosen_color = 0
-        self.nodes = nodes
+        self.choosen_color: int = 0
+        self.nodes: list = nodes
 
     def drawing(self, mouse_click, mouse_pos) -> None:
         for i in range(Config.COLUMNS):

@@ -3,10 +3,10 @@
 from modules.config import Config
 from modules.color import Color
 
-def get_plan(all_nodes) -> list[int]:
-    nodes_barriers = []
-    node_start = None
-    node_end = None
+def get_plan(all_nodes: list) -> list[int]:
+    nodes_barriers: list = []
+    node_start: tuple[int] = None
+    node_end: tuple[int] = None
 
     for i in range(Config.COLUMNS):
             for j in range(Config.ROWS):
