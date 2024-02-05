@@ -15,6 +15,9 @@ class Planner:
         self.choosen_color: int = 0
         self.nodes: list = nodes
 
+        self.node_start: tuple[int] = None
+        self.node_end: tuple[int] = None
+
     # function to draw the nodes
     def drawing(self, mouse_click, mouse_pos) -> None:
         for i in range(Config.COLUMNS):
@@ -23,6 +26,18 @@ class Planner:
                 # check if the mouse is clicked on the node
                 if self.nodes[i][j].rect.collidepoint(mouse_pos):
                     if mouse_click[0] == 1:
+
+                        # if start, end was already choosen, change the color of the previous node
+                        if self.choosen_color == 1:
+                            if self.node_start is not None:
+                                self.nodes[self.node_start[0]][self.node_start[1]].color = Color.WHITE
+                            self.node_start = self.nodes[i][j].point
+                        elif self.choosen_color == 2:
+                            if self.node_end is not None:
+                                self.nodes[self.node_end[0]][self.node_end[1]].color = Color.WHITE
+                            self.node_end = self.nodes[i][j].point
+                            
+                        # change the color of the node
                         self.nodes[i][j].color = self.colors[self.choosen_color]
 
     # function to change the painting color
