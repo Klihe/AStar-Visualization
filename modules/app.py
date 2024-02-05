@@ -47,15 +47,16 @@ class App:
 
         elif keys[pygame.K_2]:
             self.barriers, self.start, self.end = get_plan(self.nodes)
-            for i in range(Config.COLUMNS):
-                for j in range(Config.ROWS):
-                    self.nodes[i, j].node_start = self.start
-                    self.nodes[i, j].node_end = self.end
-            self.result = False
-            self.state = State.CALC
-            pygame.time.delay(200)
+            if self.start and self.end and self.barriers:
+                for i in range(Config.COLUMNS):
+                    for j in range(Config.ROWS):
+                        self.nodes[i, j].node_start = self.start
+                        self.nodes[i, j].node_end = self.end
+                self.result = False
+                self.state = State.CALC
+                pygame.time.delay(200)
 
-        elif keys[pygame.K_3]:
+        elif keys[pygame.K_3] and self.calc:
             self.state = State.RESULT
             pygame.time.delay(200)
             
