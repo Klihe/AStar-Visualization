@@ -60,15 +60,18 @@ class App:
             pygame.time.delay(200)
             
         if self.state == State.PLANNER:
+            pygame.display.set_caption("A* Pathfinding Algorithm - PLANNER")
             self.planner.drawing(mouse_click, mouse_pos)
             self.planner.change_color(keys)
 
         elif self.state == State.CALC:
+            pygame.display.set_caption("A* Pathfinding Algorithm - CALCULATION")
             if self.calc == False:
                 calc(self.nodes[self.start[0]][self.start[1]], self.end, self.nodes)
                 self.calc = True
 
         elif self.state == State.RESULT:
+            pygame.display.set_caption("A* Pathfinding Algorithm - PATHFINDING RESULT")
             if not self.result:
                 result(self.nodes[self.end[0]][self.end[1]], self.start, self.nodes)
                 self.result = True
