@@ -33,8 +33,14 @@ def result(curr_node: tuple[int], end_point: tuple[int], all_nodes: list) -> Non
         if not end:
             # sort the nodes based on the distance from the start node
             save_nodes = sorted(save_nodes, key=lambda x: x.g)
-            save_nodes[0].color = Color.BLUE
 
-            # set the current node to the node with the smallest distance
-            curr_node = save_nodes[0]
-            save_nodes.pop(0)
+            if len(save_nodes) > 0:
+                save_nodes[0].color = Color.BLUE
+
+                # set the current node to the node with the smallest distance
+                curr_node = save_nodes[0]
+                save_nodes.pop(0)
+
+            # end if the end point can't reached
+            else:
+                end = True
