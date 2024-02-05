@@ -13,7 +13,7 @@ app = App()
 
 # create the window
 window = pygame.display.set_mode((Config.WINDOW_WIDTH, Config.WINDOW_HEIGHT))
-pygame.display.set_caption("PathFinding")
+pygame.display.set_caption("A* Pathfinding Algorithm")
 
 # create the clock and font
 clock = pygame.time.Clock()
