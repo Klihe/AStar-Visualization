@@ -1,19 +1,21 @@
 # app.py
 
-import pygame
-import numpy as np
-
-from modules.config import Config
-from modules.color import Color
+# imports of modules
 from modules.app_state.state import State
 from modules.node.node import Node
 from modules.app_state.planner import Planner
-
+from modules.color import Color
+from modules.config import Config
 from modules.background import grid
 from modules.app_state.calc import calc
 from modules.app_state.result import result
 from modules.app_state.get_plan import get_plan
 
+# imports of libraries
+import pygame
+import numpy as np
+
+# App class handles the game ]s state and the nodes
 class App:
     def __init__(self) -> None:
         self.state: State = State.PLANNER

@@ -1,6 +1,8 @@
 # color.py
 
+# Color class to store all the colors used in the game
 class Color:
+    # RGB values for colors
     WHITE: tuple[int] = (255, 255, 255)
     BLACK: tuple[int] = (0, 0, 0)
     

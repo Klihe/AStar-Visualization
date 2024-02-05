@@ -1,23 +1,31 @@
 # planner.py
 
-import pygame
-
+# imports of modules
 from modules.color import Color
 from modules.config import Config
 
+# imports of libraries
+import pygame
+
+# Planner class to handle the planner state of the game
 class Planner:
     def __init__(self, nodes: list) -> None:
+        # colors to draw the nodes
         self.colors = [Color.BLACK, Color.YELLOW, Color.BLUE, Color.WHITE]
         self.choosen_color: int = 0
         self.nodes: list = nodes
 
+    # function to draw the nodes
     def drawing(self, mouse_click, mouse_pos) -> None:
         for i in range(Config.COLUMNS):
             for j in range(Config.ROWS):
+
+                # check if the mouse is clicked on the node
                 if self.nodes[i][j].rect.collidepoint(mouse_pos):
                     if mouse_click[0] == 1:
                         self.nodes[i][j].color = self.colors[self.choosen_color]
 
+    # function to change the painting color
     def change_color(self, keys) -> None:
         if keys[pygame.K_RIGHT]:
             if self.choosen_color >= len(self.colors) - 1:
@@ -32,6 +40,7 @@ class Planner:
                 self.choosen_color -= 1
             pygame.time.delay(100)
     
+    # function to draw the color palette
     def draw(self, surface, mouse_pos):
         image = pygame.image.load("source/colors.png")
         image_2 = pygame.image.load("source/frame.png")
