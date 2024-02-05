@@ -11,6 +11,7 @@ def get_plan(all_nodes: list) -> list[int]:
     node_start: tuple[int] = None
     node_end: tuple[int] = None
 
+    # Loop through the grid and get the barriers, start and end point
     for i in range(Config.COLUMNS):
             for j in range(Config.ROWS):
                 if all_nodes[i, j].color == Color.BLACK:
