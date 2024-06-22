@@ -12,7 +12,7 @@ pygame.init()
 app = App()
 
 # create the window
-window = pygame.display.set_mode((Config.WINDOW_WIDTH, Config.WINDOW_HEIGHT))
+window = pygame.display.set_mode((Config.WINDOW_WIDTH, Config.WINDOW_HEIGHT), pygame.FULLSCREEN)
 pygame.display.set_caption("A* Pathfinding Algorithm")
 
 # create the clock and font
@@ -24,7 +24,7 @@ running: bool = True
 while running:
     # event handling
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+        if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
             running = False
 
     # inputs handling
